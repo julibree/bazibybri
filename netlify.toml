@@ -1,0 +1,15 @@
+[build]
+  functions = "netlify/functions"
+
+# Route /api/* to Netlify Functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Serve bazi.html at root (in case index.html is the old version)
+[[redirects]]
+  from = "/"
+  to = "/bazi.html"
+  status = 200
+  force = false

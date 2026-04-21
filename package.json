@@ -1,0 +1,8 @@
+{
+  "name": "bazi-analyzer",
+  "version": "1.0.0",
+  "description": "BaZi Four Pillars of Destiny Analyzer",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.0"
+  }
+}
