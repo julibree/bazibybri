@@ -740,9 +740,9 @@ function tgBadge(code){
   const t=TG[code]||{cn:code,pin:'',en:code};
   return `<span class="tg tg-${code}" title="${t.en}">${t.cn} <small>${code}</small></span>`;
 }
-function coll(id,label,body){
-  return `<button class="coll-btn" onclick="toggleColl('${id}')"><span id="${id}-arr">▶</span> ${label}</button>
-<div id="${id}" style="display:none" class="coll-body">${body}</div>`;
+function coll(id,label,body,open){
+  return `<button class="coll-btn" onclick="toggleColl('${id}')"><span id="${id}-arr">${open?'▼':'▶'}</span> ${label}</button>
+<div id="${id}" style="${open?'':'display:none'}" class="coll-body">${body}</div>`;
 }
 function toggleColl(id){
   const el=document.getElementById(id);
@@ -3628,10 +3628,10 @@ function renderTab1(d){
     +'<div><div style="font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:.35rem">RINGKASAN DOMINAN ENERGI</div>'
     +ringD+'</div></div>';
   // Bar chart
-  let barD='<div style="flex:1;min-width:0"><div style="font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:.42rem">KEKUATAN 10 TEN GODS (RANKING)</div>';
+  let barD='<div style="flex:1;min-width:0;max-width:26rem"><div style="font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:.42rem">KEKUATAN 10 TEN GODS (RANKING)</div>';
   sortedD.forEach(s=>{
     const pct=maxScD>0?Math.min(100,Math.round(s.sc/maxScD*100)):0;
-    barD+='<div style="display:grid;grid-template-columns:2rem 5.5rem 1fr 2.6rem;align-items:center;gap:.28rem;margin-bottom:.22rem">'
+    barD+='<div style="display:grid;grid-template-columns:2rem 5rem minmax(50px,9rem) 2.4rem;align-items:center;gap:.28rem;margin-bottom:.22rem">'
       +'<span class="tg tg-'+s.code+'" style="font-size:.52rem;padding:.07rem .16rem;text-align:center">'+s.code+'</span>'
       +'<span style="font-size:.6rem;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+s.inf.en+'</span>'
       +'<div style="background:var(--border);border-radius:99px;height:5px;overflow:hidden">'
@@ -3666,27 +3666,27 @@ function renderTab1(d){
   deepHTML+='<div style="display:flex;gap:.6rem;align-items:flex-start;padding:.65rem;background:var(--surface);border-radius:12px;margin-bottom:.75rem">'
     +barD+caraD+stratD+'</div>';
   // Active TG cards
-  deepHTML+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.48rem;margin-bottom:.55rem">';
+  deepHTML+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.42rem;margin-bottom:.55rem">';
   activeTGD.forEach(s=>{
     const ico=TGICO_D[s.code]||'⭐';
-    const kB=_dBullets(s.g.positive,3);
-    const sB=_dBullets(s.g.shadow,2);
+    const kB=_dBullets(s.g.positive,2);
+    const sB=_dBullets(s.g.shadow,1);
     const posArr=s.pos.map(t=>['Hour','Day','Month','Year'][t.pillarIdx]+(t.isHidden?' (H)':''));
     const detId='tgdet-'+s.code;
     const dc=_dCol(s.sc);
-    deepHTML+='<div style="background:var(--card);border-radius:12px;padding:.6rem .65rem;border:1.5px solid var(--border);border-top:3px solid '+dc+';display:flex;flex-direction:column;gap:.3rem">'
-      +'<div style="display:flex;align-items:center;gap:.28rem;flex-wrap:wrap">'
-      +'<span class="tg tg-'+s.code+'" style="font-size:.63rem;padding:.1rem .28rem">'+s.code+'</span>'
-      +'<span style="font-size:.68rem;font-weight:700;color:var(--text)">'+s.inf.en+'</span>'
-      +'<span style="font-size:.63rem;font-weight:700;color:'+dc+';margin-left:auto">'+s.sc.toFixed(1)+' '+_dLbl(s.sc)+'</span>'
+    deepHTML+='<div style="background:var(--card);border-radius:10px;padding:.5rem .55rem;border:1.5px solid var(--border);border-top:3px solid '+dc+';display:flex;flex-direction:column;gap:.22rem">'
+      +'<div style="display:flex;align-items:center;gap:.22rem;flex-wrap:wrap">'
+      +'<span style="font-size:1.1rem">'+ico+'</span>'
+      +'<span class="tg tg-'+s.code+'" style="font-size:.6rem;padding:.08rem .22rem">'+s.code+'</span>'
+      +'<span style="font-size:.65rem;font-weight:700;color:var(--text)">'+s.inf.en+'</span>'
+      +'<span style="font-size:.6rem;font-weight:700;color:'+dc+';margin-left:auto">'+s.sc.toFixed(1)+'</span>'
       +'</div>'
-      +'<div style="text-align:center;font-size:2rem;padding:.1rem 0">'+ico+'</div>'
-      +'<div style="font-size:.62rem;color:var(--text2);line-height:1.5">'+(s.g.oneLiner||'').split(',').slice(0,5).join(', ')+'</div>'
-      +(kB.length?'<div><div style="font-size:.55rem;font-weight:700;color:#16A34A;text-transform:uppercase;letter-spacing:.3px;margin-bottom:.1rem">KEKUATAN</div>'+kB.map(b=>'<div style="font-size:.61rem;color:var(--text);line-height:1.5">✅ '+b+'</div>').join('')+'</div>':'')
-      +(sB.length?'<div><div style="font-size:.55rem;font-weight:700;color:#B91C1C;text-transform:uppercase;letter-spacing:.3px;margin-bottom:.1rem">BAYANGAN</div>'+sB.map(b=>'<div style="font-size:.61rem;color:var(--text2);line-height:1.5">❌ '+b+'</div>').join('')+'</div>':'')
-      +(posArr.length?'<div style="font-size:.59rem;color:var(--text2)"><span style="font-weight:700;color:var(--accent)">MUNCUL DI</span> '+posArr.join(', ')+'</div>':'')
-      +'<div id="'+detId+'" style="display:none;margin-top:.2rem;border-top:1px solid var(--border);padding-top:.35rem">'+buildTGFullCard(s.code,d)+'</div>'
-      +'<button onclick="(function(b){var el=document.getElementById(\''+detId+'\');var show=el.style.display===\'none\';el.style.display=show?\'block\':\'none\';b.textContent=show?\'Sembunyikan ‹\':\'Lihat Detail ›\';})(this)" style="font-size:.6rem;color:var(--accent);background:none;border:1px solid var(--border);border-radius:6px;padding:.18rem .48rem;cursor:pointer;text-align:center;margin-top:auto">Lihat Detail ›</button>'
+      +'<div style="font-size:.6rem;color:var(--text2);line-height:1.45">'+(s.g.oneLiner||'').split(',').slice(0,3).join(', ')+'</div>'
+      +(kB.length?'<div>'+kB.map(b=>'<div style="font-size:.59rem;color:var(--text);line-height:1.4">✅ '+b+'</div>').join('')+'</div>':'')
+      +(sB.length?'<div>'+sB.map(b=>'<div style="font-size:.59rem;color:var(--text2);line-height:1.4">❌ '+b+'</div>').join('')+'</div>':'')
+      +(posArr.length?'<div style="font-size:.57rem;color:var(--text2);margin-top:.05rem"><span style="font-weight:700;color:var(--accent)">📍</span> '+posArr.join(', ')+'</div>':'')
+      +'<div id="'+detId+'" style="display:none;margin-top:.15rem;border-top:1px solid var(--border);padding-top:.28rem">'+buildTGFullCard(s.code,d)+'</div>'
+      +'<button onclick="(function(b){var el=document.getElementById(\''+detId+'\');var show=el.style.display===\'none\';el.style.display=show?\'block\':\'none\';b.textContent=show?\'Sembunyikan ‹\':\'Lihat Detail ›\';})(this)" style="font-size:.58rem;color:var(--accent);background:none;border:1px solid var(--border);border-radius:5px;padding:.14rem .38rem;cursor:pointer;text-align:center;margin-top:auto">Lihat Detail ›</button>'
       +'</div>';
   });
   deepHTML+='</div>';
@@ -3739,7 +3739,7 @@ function renderTab1(d){
     +'<div><h2 style="margin:0 0 .2rem;font-size:1.25rem;font-weight:900;color:var(--text)">Ten Gods — Quick Reference</h2>'
     +'<p style="font-size:.74rem;color:var(--text2);margin:0">Understand the 10 archetypes and how they appear in your chart.</p></div>'
     +'</div>';
-  html+=coll('p1-refcards','📇 Ten Gods Reference Cards (10)',filterPillsHTML+refCardsHTML);
+  html+=coll('p1-refcards','📇 Ten Gods Reference Cards (10)',filterPillsHTML+refCardsHTML,true);
   html+=howItWorksHTML;
   html+=coll('p1-charttable','📊 How They Appear in Your Chart',chartTableHTML);
   html+=tipsHTML;
