@@ -3602,122 +3602,116 @@ function renderTab1(d){
   const weakTGD=sortedD.filter(s=>s.sc===0);
   const maxScD=sortedD[0]?.sc||1;
   const curYrD=new Date().getFullYear();
-  // Ringkasan dominan
-  const medalIco=['🥇','🥈','🥉'],medalCol_D=['#D97706','#9CA3AF','#B45309'];
-  let ringD='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem">';
+  // ── PREMIUM REDESIGN ────────────────────────────────────────────────────────
+  const medalIco=['🥇','🥈','🥉'];
+  const medalBorder=['#D97706','#9CA3AF','#92400E'];
+  const priorityCols=['#059669','#2563EB','#D97706','#7C3AED'];
+
+  // 1. HERO KPI STRIP
+  let deepHTML='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">';
   top3D.forEach((s,i)=>{
-    ringD+='<div style="background:var(--card);border-radius:10px;padding:.48rem .6rem;border-top:3px solid '+medalCol_D[i]+'">'
-      +'<div style="display:flex;align-items:center;gap:.28rem;margin-bottom:.28rem">'
-      +'<span>'+medalIco[i]+'</span>'
-      +'<span class="tg tg-'+s.code+'" style="font-size:.62rem;padding:.1rem .28rem">'+s.code+'</span>'
-      +'<span style="font-size:.66rem;font-weight:700;color:var(--text)">'+s.inf.en+'</span>'
-      +'</div>'
-      +'<div style="font-size:.7rem;font-weight:800;color:'+_dCol(s.sc)+';margin-bottom:.15rem">'+s.sc.toFixed(1)+' · '+_dLbl(s.sc)+'</div>'
-      +'<div style="font-size:.6rem;color:var(--text2);line-height:1.45">'+(s.g.oneLiner||'').split(',').slice(0,3).join(', ')+'</div>'
-      +'</div>';
-  });
-  ringD+='</div>';
-  // Header
-  let deepHTML='<div style="display:grid;grid-template-columns:1fr 1.3fr;gap:.8rem;align-items:start;margin-bottom:.75rem;padding-bottom:.7rem;border-bottom:1.5px solid var(--border)">'
-    +'<div><div style="display:flex;align-items:center;gap:.45rem;margin-bottom:.35rem">'
-    +'<span style="font-size:1.1rem">🔍</span>'
-    +'<h3 style="margin:0;font-size:.92rem;font-weight:800;color:var(--text)">DEEP ANALYSIS — TEN GODS IN '+d.name.toUpperCase()+'\'S CHART</h3>'
-    +'</div>'
-    +'<p style="font-size:.68rem;color:var(--text2);line-height:1.6;margin:0">Analisis mendalam pengaruh 10 Ten Gods dalam chart kamu berdasarkan kekuatan, ekspresi, bayangan, dan kemunculan di setiap pilar.</p>'
-    +'</div>'
-    +'<div><div style="font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:.35rem">RINGKASAN DOMINAN ENERGI</div>'
-    +ringD+'</div></div>';
-  // Bar chart
-  let barD='<div style="flex:1;min-width:0;max-width:26rem"><div style="font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:.42rem">KEKUATAN 10 TEN GODS (RANKING)</div>';
-  sortedD.forEach(s=>{
-    const pct=maxScD>0?Math.min(100,Math.round(s.sc/maxScD*100)):0;
-    barD+='<div style="display:grid;grid-template-columns:2rem 5rem minmax(50px,9rem) 2.4rem;align-items:center;gap:.28rem;margin-bottom:.22rem">'
-      +'<span class="tg tg-'+s.code+'" style="font-size:.52rem;padding:.07rem .16rem;text-align:center">'+s.code+'</span>'
-      +'<span style="font-size:.6rem;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+s.inf.en+'</span>'
-      +'<div style="background:var(--border);border-radius:99px;height:5px;overflow:hidden">'
-      +(s.sc>0?'<div style="width:'+pct+'%;height:100%;background:'+_dCol(s.sc)+';border-radius:99px"></div>':'')
-      +'</div>'
-      +'<div style="font-size:.6rem;font-weight:700;color:'+_dCol(s.sc)+';text-align:right">'+s.sc.toFixed(1)+'</div>'
-      +'</div>';
-  });
-  barD+='<div style="display:flex;justify-content:flex-end;font-size:.5rem;color:var(--text2);margin-top:.1rem;gap:.45rem">'
-    +'<span>0.5</span><span>1.0</span><span>1.5</span><span>2.0</span><span>2.5</span><span>3.0</span></div></div>';
-  // Cara Membaca
-  const caraD='<div style="background:var(--surface);border-radius:9px;padding:.58rem .62rem;flex-shrink:0;width:9rem">'
-    +'<div style="font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:.4rem">CARA MEMBACA</div>'
-    +'<div style="display:flex;gap:.3rem;margin-bottom:.3rem"><span style="color:#22C55E;flex-shrink:0">●</span><div><div style="font-size:.62rem;font-weight:700;color:var(--text)">Strong (&gt;1.5)</div><div style="font-size:.58rem;color:var(--text2);line-height:1.4">Energi menonjol, kekuatan utama kamu.</div></div></div>'
-    +'<div style="display:flex;gap:.3rem;margin-bottom:.3rem"><span style="color:#D97706;flex-shrink:0">●</span><div><div style="font-size:.62rem;font-weight:700;color:var(--text)">Moderate (0.5–1.5)</div><div style="font-size:.58rem;color:var(--text2);line-height:1.4">Energi hadir, perlu diasah & seimbang.</div></div></div>'
-    +'<div style="display:flex;gap:.3rem;margin-bottom:.4rem"><span style="color:var(--text2);flex-shrink:0">●</span><div><div style="font-size:.62rem;font-weight:700;color:var(--text)">Weak (&lt;0.5)</div><div style="font-size:.58rem;color:var(--text2);line-height:1.4">Energi lemah atau tidak dominan.</div></div></div>'
-    +'<div style="font-size:.57rem;color:var(--text2);line-height:1.5;background:var(--card);border-radius:6px;padding:.28rem .38rem">ℹ Klik <strong>Lihat Detail</strong> untuk analisis mendalam.</div>'
-    +'</div>';
-  // Fokus Strategis
-  let stratD='<div style="flex-shrink:0;width:10rem"><div style="font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:.4rem">FOKUS STRATEGIS '+curYrD+'</div><div style="display:grid;gap:.28rem">';
-  top4D.forEach(s=>{
-    const st=TGSTRAT_D[s.code]||{i:'⭐',t:'Kembangkan '+s.inf.en,d:'Optimalkan energi ini setiap hari.'};
-    stratD+='<div style="background:var(--surface);border-radius:8px;padding:.35rem .45rem;display:flex;align-items:flex-start;gap:.3rem">'
-      +'<div style="flex-shrink:0;width:1.65rem;height:1.65rem;border-radius:6px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.75rem">'+st.i+'</div>'
-      +'<div><div style="display:flex;align-items:center;gap:.22rem;margin-bottom:.05rem">'
-      +'<span style="font-size:.61rem;font-weight:700;color:var(--text)">'+st.t+'</span>'
-      +'<span class="tg tg-'+s.code+'" style="font-size:.48rem;padding:.03rem .15rem">'+s.code+'</span>'
-      +'</div><div style="font-size:.58rem;color:var(--text2);line-height:1.4">'+st.d+'</div></div></div>';
-  });
-  stratD+='</div></div>';
-  // Middle panel
-  deepHTML+='<div style="display:flex;gap:.6rem;align-items:flex-start;padding:.65rem;background:var(--surface);border-radius:12px;margin-bottom:.75rem">'
-    +barD+caraD+stratD+'</div>';
-  // Active TG cards
-  deepHTML+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.42rem;margin-bottom:.55rem">';
-  activeTGD.forEach(s=>{
-    const ico=TGICO_D[s.code]||'⭐';
-    const kB=_dBullets(s.g.positive,2);
-    const sB=_dBullets(s.g.shadow,1);
-    const posArr=s.pos.map(t=>['Hour','Day','Month','Year'][t.pillarIdx]+(t.isHidden?' (H)':''));
-    const detId='tgdet-'+s.code;
     const dc=_dCol(s.sc);
-    deepHTML+='<div style="background:var(--card);border-radius:10px;padding:.5rem .55rem;border:1.5px solid var(--border);border-top:3px solid '+dc+';display:flex;flex-direction:column;gap:.22rem">'
-      +'<div style="display:flex;align-items:center;gap:.22rem;flex-wrap:wrap">'
-      +'<span style="font-size:1.1rem">'+ico+'</span>'
-      +'<span class="tg tg-'+s.code+'" style="font-size:.6rem;padding:.08rem .22rem">'+s.code+'</span>'
-      +'<span style="font-size:.65rem;font-weight:700;color:var(--text)">'+s.inf.en+'</span>'
-      +'<span style="font-size:.6rem;font-weight:700;color:'+dc+';margin-left:auto">'+s.sc.toFixed(1)+'</span>'
+    deepHTML+=`<div style="background:var(--card);border-radius:16px;padding:14px 16px;border:1px solid ${medalBorder[i]}33;border-left:4px solid ${medalBorder[i]};box-shadow:0 1px 6px rgba(0,0,0,.07)">`
+      +`<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">`
+      +`<span style="font-size:1rem">${medalIco[i]}</span>`
+      +`<span class="tg tg-${s.code}" style="font-size:.6rem;padding:.09rem .25rem">${s.code}</span>`
+      +`<span style="font-size:.66rem;font-weight:700;color:var(--text)">${s.inf.en}</span>`
       +'</div>'
-      +'<div style="font-size:.6rem;color:var(--text2);line-height:1.45">'+(s.g.oneLiner||'').split(',').slice(0,3).join(', ')+'</div>'
-      +(kB.length?'<div>'+kB.map(b=>'<div style="font-size:.59rem;color:var(--text);line-height:1.4">✅ '+b+'</div>').join('')+'</div>':'')
-      +(sB.length?'<div>'+sB.map(b=>'<div style="font-size:.59rem;color:var(--text2);line-height:1.4">❌ '+b+'</div>').join('')+'</div>':'')
-      +(posArr.length?'<div style="font-size:.57rem;color:var(--text2);margin-top:.05rem"><span style="font-weight:700;color:var(--accent)">📍</span> '+posArr.join(', ')+'</div>':'')
-      +'<div id="'+detId+'" style="display:none;margin-top:.15rem;border-top:1px solid var(--border);padding-top:.28rem">'+buildTGFullCard(s.code,d)+'</div>'
-      +'<button onclick="(function(b){var el=document.getElementById(\''+detId+'\');var show=el.style.display===\'none\';el.style.display=show?\'block\':\'none\';b.textContent=show?\'Sembunyikan ‹\':\'Lihat Detail ›\';})(this)" style="font-size:.58rem;color:var(--accent);background:none;border:1px solid var(--border);border-radius:5px;padding:.14rem .38rem;cursor:pointer;text-align:center;margin-top:auto">Lihat Detail ›</button>'
+      +`<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:5px">`
+      +`<span style="font-size:1.75rem;font-weight:900;color:${dc};line-height:1">${s.sc.toFixed(1)}</span>`
+      +`<span style="font-size:.62rem;font-weight:700;letter-spacing:.4px;color:${dc}">${_dLbl(s.sc).toUpperCase()}</span>`
+      +'</div>'
+      +`<div style="font-size:.61rem;color:var(--text2);line-height:1.5">${(s.g.oneLiner||'').split(',').slice(0,3).join(' · ')}</div>`
       +'</div>';
   });
   deepHTML+='</div>';
-  // Weak TG cards
-  if(weakTGD.length){
-    deepHTML+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.38rem;margin-bottom:.52rem">';
-    weakTGD.forEach(s=>{
-      const ico=TGICO_D[s.code]||'⭐';
-      const kB=_dBullets(s.g.positive,2);
-      const sB=_dBullets(s.g.shadow,1);
-      const posArr=s.pos.map(t=>['Hour','Day','Month','Year'][t.pillarIdx]+(t.isHidden?' (H)':''));
-      deepHTML+='<div style="background:var(--card);border-radius:10px;padding:.48rem .55rem;border:1px solid var(--border);opacity:.82">'
-        +'<div style="display:flex;align-items:center;gap:.25rem;margin-bottom:.25rem;flex-wrap:wrap">'
-        +'<span class="tg tg-'+s.code+'" style="font-size:.58rem;padding:.07rem .22rem">'+s.code+'</span>'
-        +'<span style="font-size:.63rem;font-weight:700;color:var(--text)">'+s.inf.en+'</span>'
-        +'<span style="font-size:.56rem;color:var(--text2);margin-left:auto">0  Weak</span>'
-        +'</div>'
-        +'<div style="text-align:center;font-size:1.4rem;margin-bottom:.2rem">'+ico+'</div>'
-        +'<div style="font-size:.59rem;color:var(--text2);line-height:1.45;margin-bottom:.25rem">'+(s.g.oneLiner||'').split(',').slice(0,4).join(', ')+'</div>'
-        +(kB.length?'<div style="font-size:.55rem;font-weight:700;color:#16A34A;margin-bottom:.08rem">KEKUATAN</div>'+kB.map(b=>'<div style="font-size:.58rem;color:var(--text2)">• '+b+'</div>').join(''):'')
-        +(sB.length?'<div style="font-size:.55rem;font-weight:700;color:#B91C1C;margin:.16rem 0 .07rem">BAYANGAN</div>'+sB.map(b=>'<div style="font-size:.58rem;color:var(--text2)">• '+b+'</div>').join(''):'')
-        +'<div style="font-size:.57rem;color:var(--text2);margin-top:.22rem"><span style="font-weight:700;color:var(--accent)">MUNCUL DI</span> '+(posArr.length?posArr.join(', '):'Tidak muncul signifikan')+'</div>'
-        +'</div>';
-    });
-    deepHTML+='</div>';
-  }
-  // Footer
-  deepHTML+='<div style="background:var(--surface);border-radius:8px;padding:.4rem .62rem;font-size:.65rem;color:var(--text2);line-height:1.6;border-left:3px solid var(--earth)">'
-    +'⭐ Ten Gods bekerja dinamis. Fokus pada menguatkan kekuatan utama ('+top3D.slice(0,2).map(s=>s.code).join(' & ')+')'
-    +(sortedD.filter(s=>s.sc>=0.5&&s.sc<1.5).length?', menyeimbangkan energi Moderate ('+sortedD.filter(s=>s.sc>=0.5&&s.sc<1.5).map(s=>s.code).join(', ')+')'  :'')
-    +' dan menyadari area lemah untuk menghindari bayangan negatif.</div>';
+
+  // 2. DASHBOARD ROW: bars (left) + strategy (right)
+  // Bars panel
+  let barsHTML=`<div style="background:var(--card);border-radius:16px;padding:14px 16px;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.05)">`
+    +`<div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin-bottom:10px">Energy Ranking</div>`;
+  sortedD.forEach(s=>{
+    const pct=maxScD>0?Math.min(100,Math.round(s.sc/maxScD*100)):0;
+    const dc=_dCol(s.sc);
+    barsHTML+=`<div style="display:grid;grid-template-columns:2.2rem 6.2rem 1fr 2.6rem;align-items:center;gap:8px;margin-bottom:7px">`
+      +`<span class="tg tg-${s.code}" style="font-size:.52rem;padding:.06rem .14rem;text-align:center">${s.code}</span>`
+      +`<span style="font-size:.62rem;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.inf.en}</span>`
+      +`<div style="background:var(--surface);border-radius:99px;height:6px;overflow:hidden">`
+      +(s.sc>0?`<div style="width:${pct}%;height:100%;background:${dc};border-radius:99px"></div>`:'')
+      +'</div>'
+      +`<span style="font-size:.63rem;font-weight:700;color:${dc};text-align:right">${s.sc>0?s.sc.toFixed(1):'—'}</span>`
+      +'</div>';
+  });
+  barsHTML+=`<div style="display:flex;gap:14px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">`
+    +`<span style="display:flex;align-items:center;gap:4px;font-size:.58rem;color:var(--text2)"><span style="width:8px;height:8px;border-radius:50%;background:#22C55E;flex-shrink:0"></span>Strong &gt;1.5</span>`
+    +`<span style="display:flex;align-items:center;gap:4px;font-size:.58rem;color:var(--text2)"><span style="width:8px;height:8px;border-radius:50%;background:#D97706;flex-shrink:0"></span>Moderate</span>`
+    +`<span style="display:flex;align-items:center;gap:4px;font-size:.58rem;color:var(--text2)"><span style="width:8px;height:8px;border-radius:50%;background:#9CA3AF;flex-shrink:0"></span>Weak</span>`
+    +'</div></div>';
+
+  // Strategy panel
+  let stratHTML=`<div style="background:var(--card);border-radius:16px;padding:14px 16px;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.05)">`
+    +`<div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin-bottom:10px">Strategic Focus ${curYrD}</div>`
+    +`<div style="display:grid;gap:7px">`;
+  top4D.forEach((s,i)=>{
+    const st=TGSTRAT_D[s.code]||{i:'⭐',t:'Develop '+s.inf.en,d:'Optimise this energy daily.'};
+    stratHTML+=`<div style="display:flex;align-items:flex-start;gap:8px;padding:9px 11px;background:var(--surface);border-radius:10px;border-left:3px solid ${priorityCols[i]}">`
+      +`<span style="font-size:.62rem;font-weight:900;color:${priorityCols[i]};min-width:1.6rem;padding-top:.1rem">#${i+1}</span>`
+      +`<span style="font-size:.95rem;flex-shrink:0">${st.i}</span>`
+      +`<div style="min-width:0">`
+      +`<div style="display:flex;align-items:center;gap:5px;margin-bottom:2px">`
+      +`<span style="font-size:.67rem;font-weight:700;color:var(--text)">${st.t}</span>`
+      +`<span class="tg tg-${s.code}" style="font-size:.48rem;padding:.03rem .14rem">${s.code}</span>`
+      +'</div>'
+      +`<span style="font-size:.6rem;color:var(--text2);line-height:1.45">${st.d}</span>`
+      +'</div></div>';
+  });
+  stratHTML+='</div></div>';
+
+  deepHTML+=`<div style="display:grid;grid-template-columns:1fr 290px;gap:10px;margin-bottom:14px;align-items:start">${barsHTML}${stratHTML}</div>`;
+
+  // 3. TEN GODS ACCORDION
+  const orderedTGs=[...activeTGD,...weakTGD];
+  deepHTML+=`<div style="background:var(--card);border-radius:16px;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.05);overflow:hidden;margin-bottom:14px">`
+    +`<div style="padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">`
+    +`<span style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text2)">Ten Gods · Detail</span>`
+    +`<span style="font-size:.6rem;color:var(--text2)">${activeTGD.length} active · ${weakTGD.length} dormant</span>`
+    +'</div>';
+  orderedTGs.forEach((s,idx)=>{
+    const ico=TGICO_D[s.code]||'⭐';
+    const dc=_dCol(s.sc);
+    const isWeak=s.sc===0;
+    const kB=_dBullets(s.g.positive,3);
+    const sB=_dBullets(s.g.shadow,2);
+    const posArr=s.pos.map(t=>['Hour','Day','Month','Year'][t.pillarIdx]+(t.isHidden?' (H)':''));
+    const accId='dacc-'+s.code;
+    const isLast=idx===orderedTGs.length-1;
+    const posLabel=posArr.length?(posArr.slice(0,2).join(', ')+(posArr.length>2?' +'+( posArr.length-2):'')):'—';
+    deepHTML+=`<div style="${!isLast?'border-bottom:1px solid var(--border)':''};${isWeak?'opacity:.65':''}">`
+      +`<button onclick="(function(btn){var b=document.getElementById('${accId}');var open=b.style.display==='none';b.style.display=open?'block':'none';btn.querySelector('.acc-a').style.transform=open?'rotate(90deg)':'rotate(0)'})(this)" style="width:100%;background:none;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;gap:8px;text-align:left;font-family:inherit;transition:background .15s" onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='none'">`
+      +`<span style="font-size:.9rem">${ico}</span>`
+      +`<span class="tg tg-${s.code}" style="font-size:.56rem;padding:.07rem .22rem;flex-shrink:0">${s.code}</span>`
+      +`<span style="font-size:.69rem;font-weight:700;color:var(--text);flex:1">${s.inf.en}</span>`
+      +`<span style="font-size:.58rem;color:var(--text2);margin-right:8px">${posLabel}</span>`
+      +`<span style="font-size:.63rem;font-weight:700;color:${dc};min-width:2rem;text-align:right">${isWeak?'—':s.sc.toFixed(1)}</span>`
+      +`<span class="acc-a" style="font-size:.8rem;color:var(--text2);transition:transform .2s;margin-left:4px;flex-shrink:0">›</span>`
+      +'</button>'
+      +`<div id="${accId}" style="display:none;padding:0 16px 14px;border-top:1px solid var(--surface)">`
+      +`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">`
+      +(kB.length?`<div><div style="font-size:.55rem;font-weight:700;color:#16A34A;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px">Strengths</div>${kB.map(b=>`<div style="font-size:.62rem;color:var(--text);line-height:1.55">✅ ${b}</div>`).join('')}</div>`:'<div></div>')
+      +(sB.length?`<div><div style="font-size:.55rem;font-weight:700;color:#B91C1C;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px">Shadow</div>${sB.map(b=>`<div style="font-size:.62rem;color:var(--text2);line-height:1.55">⚠️ ${b}</div>`).join('')}</div>`:'<div></div>')
+      +'</div>'
+      +(posArr.length?`<div style="font-size:.61rem;color:var(--text2);margin-bottom:10px"><span style="font-weight:700;color:var(--accent)">Appears in:</span> ${posArr.join(', ')}</div>`:'')
+      +`<div id="detfull-${s.code}" style="display:none;margin-bottom:8px">${buildTGFullCard(s.code,d)}</div>`
+      +`<button onclick="(function(b){var el=document.getElementById('detfull-${s.code}');var show=el.style.display==='none';el.style.display=show?'block':'none';b.textContent=show?'Hide full detail ‹':'Show full detail ›'})(this)" style="font-size:.59rem;color:var(--accent);background:none;border:1px solid var(--border);border-radius:6px;padding:.22rem .55rem;cursor:pointer;font-family:inherit">Show full detail ›</button>`
+      +'</div></div>';
+  });
+  deepHTML+='</div>';
+
+  // Footer insight
+  const modCodes=sortedD.filter(s=>s.sc>=0.5&&s.sc<1.5).map(s=>s.code);
+  deepHTML+=`<div style="background:linear-gradient(135deg,var(--surface),var(--card));border-radius:12px;padding:10px 14px;font-size:.63rem;color:var(--text2);line-height:1.65;border-left:3px solid var(--earth)">`
+    +`⭐ Focus on strengthening <strong>${top3D.slice(0,2).map(s=>s.code).join(' & ')}</strong>`
+    +(modCodes.length?`, balancing <strong>${modCodes.join(', ')}</strong>`:'')+`, and staying mindful of shadow patterns to avoid negative expressions.</div>`;
 
   // Calc examples
   const exStems=tgs.filter(t=>!t.isHidden&&t.tg!=='DM').slice(0,3);
